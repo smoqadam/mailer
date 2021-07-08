@@ -20,7 +20,7 @@ interface Mailable
 
     public function setBody(string $body);
 
-    public function getType(): string;
+    public function isHtml(): bool;
 
-    public function setType(string $type);
+    public function setIsHtml(bool $isHtml);
 }

@@ -4,15 +4,14 @@ namespace App\Mail;
 
 use App\Mail\Contracts\Mailable;
 use App\Mail\Contracts\MailerInterface;
-use App\Mail\Contracts\MailerProviderInterface;
 use App\Mail\Contracts\ValidationInterface;
 
 class Mailer implements MailerInterface
 {
-    private MailerProviderInterface $provider;
+    private AbstractMailer $provider;
     private ValidationInterface $validation;
 
-    public function __construct(MailerProviderInterface $provider, ValidationInterface $validation)
+    public function __construct(AbstractMailer $provider, ValidationInterface $validation)
     {
         $this->provider = $provider;
         $this->validation = $validation;

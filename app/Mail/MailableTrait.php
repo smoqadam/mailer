@@ -6,7 +6,7 @@ trait MailableTrait
 {
     private string $subject;
     private string $body;
-    private string $type;
+    private bool $isHtml;
     private string $email;
     private string $name;
 
@@ -30,14 +30,14 @@ trait MailableTrait
         $this->body = $body;
     }
 
-    public function getType(): string
+    public function isHtml(): bool
     {
-        return $this->type;
+        return $this->isHtml;
     }
 
-    public function setType(string $type): void
+    public function setIsHtml(bool $isHtml): void
     {
-        $this->type = $type;
+        $this->isHtml = $isHtml;
     }
 
     public function getEmail(): string
