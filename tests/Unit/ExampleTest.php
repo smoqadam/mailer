@@ -2,17 +2,21 @@
 
 namespace Tests\Unit;
 
+use App\Mail\EmailProviders\Sendgrid;
+use App\Mail\Mailable;
+use App\Mail\Mailer;
 use PHPUnit\Framework\TestCase;
 
 class ExampleTest extends TestCase
 {
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function test_example()
+    public function testExample()
     {
-        $this->assertTrue(true);
+        $mailable = new Mailable();
+        $mailable->setEmail('saeed.moqadam@gmail.com');
+        $mailable->setName('Saeed');
+        $mailable->setBody('Hello');
+        $mailable->setSubject('Email subject');
+        $mail = new Mailer(new Sendgrid());
+        $mail->send($mailable);
     }
 }
