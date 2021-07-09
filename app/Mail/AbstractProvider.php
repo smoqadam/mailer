@@ -2,9 +2,11 @@
 
 namespace App\Mail;
 
+use App\Mail\Contracts\Mailable as MailableContract;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
-abstract class AbstractMailer
+abstract class AbstractProvider
 {
     protected HttpClientInterface $httpClient;
 
@@ -13,5 +15,5 @@ abstract class AbstractMailer
         $this->httpClient = $httpClient;
     }
 
-    abstract public function send(Mailable $mailable);
+    abstract public function send(MailableContract $mailable): ResponseInterface;
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail;
+namespace App\Mail\Exceptions;
 
 class MailerException extends \Exception
 {

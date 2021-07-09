@@ -1,24 +1,25 @@
 <?php
 
-namespace App\Mail\EmailProviders;
+namespace App\Mail\Providers;
 
-use App\Mail\AbstractMailer;
+use App\Mail\AbstractProvider;
 use App\Mail\Contracts\Mailable;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class Sendinblue extends AbstractMailer
+class Sendinblue extends AbstractProvider
 {
     private string $apiKey;
 
-    public function __construct(HttpClientInterface $httpClient, string $apiKey)
+    public function __construct(HttpClientInterface $httpClient)
     {
-        $this->apiKey = $apiKey;
+        $this->apiKey = env('SENDINBLUE_API_KEY');
         parent::__construct($httpClient);
     }
 
-    public function send(Mailable $mailable)
+    public function send(Mailable $mailable):ResponseInterface
     {
-        $this->httpClient->request('POST', 'https://api.sendinblue.com/v3/smtp/email', [
+        return $this->httpClient->request('POST', 'https://api.sendinblue.com/v3/smtp/email', [
             'json' => $this->getPayload($mailable),
             'headers' => $this->getHeaders(),
         ]);

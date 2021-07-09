@@ -2,9 +2,11 @@
 
 namespace App\Mail\Contracts;
 
+use App\Mail\AbstractProvider;
+
 interface MailerInterface
 {
     public function send(Mailable $mailable): void;
 
-    public function validate(Mailable $mailable): bool;
+    public function setProvider(AbstractProvider $provider);
 }

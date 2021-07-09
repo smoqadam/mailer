@@ -4,31 +4,37 @@ namespace App\Mail;
 
 use App\Mail\Contracts\Mailable;
 use App\Mail\Contracts\MailerInterface;
-use App\Mail\Contracts\ValidationInterface;
+use App\Mail\Exceptions\MailerException;
 
 class Mailer implements MailerInterface
 {
-    private AbstractMailer $provider;
-    private ValidationInterface $validation;
+    private ?AbstractProvider $provider;
 
-    public function __construct(AbstractMailer $provider, ValidationInterface $validation)
+    public function __construct(?AbstractProvider $provider = null)
     {
         $this->provider = $provider;
-        $this->validation = $validation;
     }
 
     public function send(Mailable $mailable): void
     {
-        try {
-            $this->validate($mailable);
-            $this->provider->send($mailable);
-        } catch (\Exception $e) {
-            throw $e;
+        if (!$this->provider instanceof AbstractProvider) {
+            throw new \InvalidArgumentException('provider is null');
+        }
+
+        $response = $this->getProvider()->send($mailable);
+
+        if ($response->getStatusCode() != 200) {
+            throw new MailerException(sprintf('mail send failed: %s', $response->getContent(false)));
         }
     }
 
-    public function validate(Mailable $mailable): bool
+    public function setProvider(AbstractProvider $provider): void
     {
-        return $this->validation->validate($mailable);
+        $this->provider = $provider;
+    }
+
+    public function getProvider(): AbstractProvider
+    {
+        return $this->provider;
     }
 }
