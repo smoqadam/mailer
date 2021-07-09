@@ -2,27 +2,32 @@
 
 namespace App\Mail\Providers;
 
-use App\Mail\AbstractProvider;
+use App\Mail\Contracts\EmailProvider;
 use App\Mail\Contracts\Mailable;
+use App\Mail\Exceptions\MailerException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class Sendinblue extends AbstractProvider
+class Sendinblue implements EmailProvider
 {
-    private string $apiKey;
+    private HttpClientInterface $httpClient;
 
     public function __construct(HttpClientInterface $httpClient)
     {
-        $this->apiKey = env('SENDINBLUE_API_KEY');
-        parent::__construct($httpClient);
+        $this->httpClient = $httpClient;
     }
 
-    public function send(Mailable $mailable):ResponseInterface
+    public function send(Mailable $mailable):bool
     {
-        return $this->httpClient->request('POST', 'https://api.sendinblue.com/v3/smtp/email', [
+        $response = $this->httpClient->request('POST', 'https://api.sendinblue.com/v3/smtp/email', [
             'json' => $this->getPayload($mailable),
             'headers' => $this->getHeaders(),
         ]);
+
+        if (200 != $response->getStatusCode()) {
+            return false;
+        }
+
+        return true;
     }
 
     private function getPayload(Mailable $mailable): array
@@ -46,7 +51,7 @@ class Sendinblue extends AbstractProvider
     private function getHeaders(): array
     {
         return [
-            'api-key' => $this->apiKey,
+            'api-key' => env('SENDINBLUE_API_KEY'),
         ];
     }
 }

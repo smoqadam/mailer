@@ -2,27 +2,31 @@
 
 namespace App\Mail\Providers;
 
-use App\Mail\AbstractProvider;
+use App\Mail\Contracts\EmailProvider;
 use App\Mail\Contracts\Mailable;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class Sendgrid extends AbstractProvider
+class Sendgrid implements EmailProvider
 {
-    private string $apiKey;
+    private HttpClientInterface $httpClient;
 
     public function __construct(HttpClientInterface $httpClient)
     {
-        $this->apiKey = env('SENDGRID_API_KEY');
-        parent::__construct($httpClient);
+        $this->httpClient = $httpClient;
     }
 
-    public function send(Mailable $mailable): ResponseInterface
+    public function send(Mailable $mailable): bool
     {
-        return $this->httpClient->request('POST', 'https://api.sendgrid.com/v3/mail/send', [
+        $response = $this->httpClient->request('POST', 'https://api.sendgrid.com/v3/mail/send', [
             'json' => $this->getPayload($mailable),
-            'auth_bearer' => $this->apiKey,
+            'auth_bearer' => $this->getApiKey(),
         ]);
+
+        if (200 != $response->getStatusCode()) {
+            return false;
+        }
+
+        return true;
     }
 
     private function getPayload(Mailable $mailable): array
@@ -53,5 +57,10 @@ class Sendgrid extends AbstractProvider
         ];
 
         return $payload;
+    }
+
+    private function getApiKey()
+    {
+        return env('SENDGRID_API_KEY');
     }
 }
