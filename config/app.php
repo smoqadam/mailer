@@ -230,4 +230,8 @@ return [
 
     ],
 
+    'emailProviders' => [
+        App\Mail\Providers\Sendgrid::class,
+        App\Mail\Providers\Sendinblue::class,
+    ]
 ];

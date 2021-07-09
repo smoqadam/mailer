@@ -1,0 +1,63 @@
+version: "3"
+
+services:
+  nginx:
+    build:
+      context: ./docker/nginx/
+    ports:
+      - "8008:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www/html/
+    links:
+      - php
+    depends_on:
+      - php
+
+  php:
+    build:
+      context: ./docker/php/
+    networks:
+      samnet:
+        aliases:
+          - fpm
+    volumes:
+      - ./:/var/www/html/
+    ports:
+      - "9000:9000"
+    depends_on:
+      - db
+      - rabbitmq
+    links:
+      - db
+
+  db:
+    image: mysql
+    restart: always
+    networks:
+      samnet:
+        aliases:
+          - mysql.local
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=database
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+
+  rabbitmq:
+    image: rabbitmq:management
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq:cached
+    networks:
+      samnet:
+        aliases:
+          - rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
+networks:
+  samnet:
