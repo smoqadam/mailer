@@ -2,10 +2,11 @@
 
 namespace Tests\Unit\Mail;
 
+use App\Jobs\MailSend;
 use App\Mail\Contracts\EmailProvider;
 use App\Mail\Exceptions\MailerException;
-use App\Mail\Mailable;
 use App\Mail\Mailer;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class MailerTest extends TestCase
@@ -28,4 +29,20 @@ class MailerTest extends TestCase
         $mailer->send($mailable);
     }
 
+    public function testQueue()
+    {
+        Queue::fake();
+        $mailer = new Mailer();
+        $mailer->queue($this->createMailable());
+        Queue::assertPushed(MailSend::class);
+    }
+
+    public function testQueueTwice()
+    {
+        Queue::fake();
+        $mailer = new Mailer();
+        $mailer->queue($this->createMailable());
+        $mailer->queue($this->createMailable());
+        Queue::assertPushed(MailSend::class, 2);
+    }
 }

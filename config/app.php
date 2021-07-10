@@ -229,9 +229,4 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
     ],
-
-    'emailProviders' => [
-        App\Mail\Providers\Sendgrid::class,
-        App\Mail\Providers\Sendinblue::class,
-    ]
 ];

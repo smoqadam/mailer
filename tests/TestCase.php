@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Mail\Contracts\EmailProvider;
 use App\Mail\Mailable;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
@@ -19,5 +20,12 @@ abstract class TestCase extends BaseTestCase
         $mailable->setBody('test');
 
         return $mailable;
+    }
+
+    protected function createMockProvider($return)
+    {
+        $provider = $this->getMockBuilder(EmailProvider::class)->getMock();
+        $provider->expects($this->any())->method('send')->will(self::returnValue($return));
+        return $provider;
     }
 }
