@@ -12,7 +12,9 @@ class SendinblueTest extends TestCase
 {
     public function testSendSuccessfully()
     {
-        $provider = new Sendinblue(new MockHttpClient());
+        $provider = new Sendinblue(new MockHttpClient([
+            new MockResponse('', ['http_code' => 201]),
+        ]));
         $result = $provider->send($this->createMailable());
         $this->assertTrue($result);
     }

@@ -4,6 +4,7 @@ namespace App\Mail\Providers;
 
 use App\Mail\Contracts\EmailProvider;
 use App\Mail\Contracts\Mailable;
+use Illuminate\Support\Facades\Log;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class Sendgrid implements EmailProvider
@@ -21,8 +22,7 @@ class Sendgrid implements EmailProvider
             'json' => $this->getPayload($mailable),
             'auth_bearer' => $this->getApiKey(),
         ]);
-
-        if (200 != $response->getStatusCode()) {
+        if (202 != $response->getStatusCode()) {
             return false;
         }
 

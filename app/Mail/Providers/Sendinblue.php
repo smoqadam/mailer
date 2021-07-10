@@ -4,7 +4,6 @@ namespace App\Mail\Providers;
 
 use App\Mail\Contracts\EmailProvider;
 use App\Mail\Contracts\Mailable;
-use App\Mail\Exceptions\MailerException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class Sendinblue implements EmailProvider
@@ -16,14 +15,14 @@ class Sendinblue implements EmailProvider
         $this->httpClient = $httpClient;
     }
 
-    public function send(Mailable $mailable):bool
+    public function send(Mailable $mailable): bool
     {
         $response = $this->httpClient->request('POST', 'https://api.sendinblue.com/v3/smtp/email', [
             'json' => $this->getPayload($mailable),
             'headers' => $this->getHeaders(),
         ]);
 
-        if (200 != $response->getStatusCode()) {
+        if (201 != $response->getStatusCode()) {
             return false;
         }
 

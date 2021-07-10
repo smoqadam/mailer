@@ -11,7 +11,9 @@ class SendgridTest extends TestCase
 {
     public function testSendSuccessfully()
     {
-        $provider = new Sendgrid(new MockHttpClient());
+        $provider = new Sendgrid(new MockHttpClient([
+            new MockResponse('', ['http_code' => 202]),
+        ]));
         $result = $provider->send($this->createMailable());
         $this->assertTrue($result);
     }
@@ -19,7 +21,7 @@ class SendgridTest extends TestCase
     public function testSendFail()
     {
         $provider = new Sendgrid(new MockHttpClient([
-            new MockResponse('', ['http_code' => 500]),
+            new MockResponse('...', ['http_code' => 500]),
         ]));
         $result = $provider->send($this->createMailable());
         $this->assertFalse($result);

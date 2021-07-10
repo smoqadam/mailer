@@ -12,21 +12,6 @@ class Collection extends \ArrayObject
         parent::__construct($data);
     }
 
-    public function current()
-    {
-        return current($this->data);
-    }
-
-    public function next()
-    {
-        return next($this->data);
-    }
-
-    public function reset(): void
-    {
-        reset($this->data);
-    }
-
     public function offsetSet($key, $value)
     {
         if (!$this->checkType($value)) {
