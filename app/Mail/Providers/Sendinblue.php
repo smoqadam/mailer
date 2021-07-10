@@ -2,11 +2,11 @@
 
 namespace App\Mail\Providers;
 
-use App\Mail\Contracts\EmailProvider;
 use App\Mail\Contracts\Mailable;
+use App\Mail\Provider;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class Sendinblue implements EmailProvider
+class Sendinblue extends Provider
 {
     private HttpClientInterface $httpClient;
 
@@ -23,6 +23,8 @@ class Sendinblue implements EmailProvider
         ]);
 
         if (201 != $response->getStatusCode()) {
+            $this->error = $response->getContent(false);
+
             return false;
         }
 

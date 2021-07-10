@@ -26,10 +26,10 @@ class SendQueuedMailableTest extends TestCase
 
     public function testSendShouldFail()
     {
-        Log::shouldReceive('error')->once()->with('mail send failed');
+        Log::shouldReceive('error')->once()->with('error');
 
         $queuedMailable = new SendQueuedMailable(new Mailer());
-        $provider1 = $this->createMockProvider(false);
+        $provider1 = $this->createMockProvider(false, 'error');
         $result = $queuedMailable
             ->addProvider($provider1)
             ->send($this->createMailable());
@@ -51,12 +51,12 @@ class SendQueuedMailableTest extends TestCase
     public function testSendSecondProviderShouldRun()
     {
         /// error for the first provider
-        Log::shouldReceive('error')->once()->with('mail send failed');
+        Log::shouldReceive('error')->once()->with('error');
         /// info for the second provider
         Log::shouldReceive('info')->once()->with('success');
 
         $queuedMailable = new SendQueuedMailable(new Mailer());
-        $provider1 = $this->createMockProvider(false);
+        $provider1 = $this->createMockProvider(false, 'error');
         $provider2 = $this->createMockProvider(true);
         $result = $queuedMailable
             ->addProvider($provider1)

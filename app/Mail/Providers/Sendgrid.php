@@ -4,10 +4,10 @@ namespace App\Mail\Providers;
 
 use App\Mail\Contracts\EmailProvider;
 use App\Mail\Contracts\Mailable;
-use Illuminate\Support\Facades\Log;
+use App\Mail\Provider;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class Sendgrid implements EmailProvider
+class Sendgrid extends Provider
 {
     private HttpClientInterface $httpClient;
 
@@ -23,6 +23,8 @@ class Sendgrid implements EmailProvider
             'auth_bearer' => $this->getApiKey(),
         ]);
         if (202 != $response->getStatusCode()) {
+            $this->error = $response->getContent(false);
+
             return false;
         }
 

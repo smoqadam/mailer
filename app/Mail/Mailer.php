@@ -36,7 +36,7 @@ class Mailer implements MailerInterface
             throw new \InvalidArgumentException('provider is null');
         }
         if (!$this->provider->send($mailable)) {
-            throw new MailerException('mail send failed');
+            throw new MailerException($this->provider->error());
         }
     }
 
