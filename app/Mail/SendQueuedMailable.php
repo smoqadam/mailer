@@ -4,15 +4,16 @@ namespace App\Mail;
 
 use App\Mail\Contracts\EmailProvider;
 use App\Mail\Contracts\Mailable as MailableContract;
+use App\Mail\Contracts\MailerInterface;
 use Illuminate\Support\Facades\Log;
 
 class SendQueuedMailable
 {
     private ProviderCollection $providers;
 
-    private Mailer $mailer;
+    private MailerInterface $mailer;
 
-    public function __construct(Mailer $mailer)
+    public function __construct(MailerInterface $mailer)
     {
         $this->providers = new ProviderCollection();
         $this->mailer = $mailer;
@@ -37,7 +38,7 @@ class SendQueuedMailable
         return $this;
     }
 
-    public function getMailer(): Mailer
+    public function getMailer(): MailerInterface
     {
         return $this->mailer;
     }
