@@ -23,4 +23,6 @@ interface Mailable
     public function isHtml(): bool;
 
     public function setIsHtml(bool $isHtml);
+
+    public function toArray(): array;
 }

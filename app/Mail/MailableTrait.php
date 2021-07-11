@@ -59,4 +59,15 @@ trait MailableTrait
     {
         $this->name = $name;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->getName(),
+            'email' => $this->getEmail(),
+            'subject' => $this->getSubject(),
+            'body' => $this->getBody(),
+            'isHtml' => $this->isHtml(),
+        ];
+    }
 }

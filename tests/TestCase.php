@@ -3,9 +3,10 @@
 namespace Tests;
 
 use App\Mail\Contracts\EmailProvider;
-use App\Mail\HttpProvider;
 use App\Mail\Mailable;
+use App\Mail\Mailer;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Psr\Log\LoggerInterface;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -29,5 +30,11 @@ abstract class TestCase extends BaseTestCase
         $provider->expects($this->any())->method('send')->will(self::returnValue($return));
         $provider->expects($this->any())->method('error')->will(self::returnValue($error));
         return $provider;
+    }
+
+    public function createMailer()
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        return new Mailer($logger);
     }
 }

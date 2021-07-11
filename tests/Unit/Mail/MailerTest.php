@@ -5,7 +5,6 @@ namespace Tests\Unit\Mail;
 use App\Jobs\MailSend;
 use App\Mail\Contracts\EmailProvider;
 use App\Mail\Exceptions\MailerException;
-use App\Mail\Mailer;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
@@ -13,7 +12,7 @@ class MailerTest extends TestCase
 {
     public function testSendFail()
     {
-        $mailer = new Mailer();
+        $mailer = $this->createMailer();
         $provider = $this->getMockBuilder(EmailProvider::class)->getMock();
         $provider->expects($this->any())->method('send')->will(self::returnValue(false));
         $mailer->setProvider($provider);
@@ -23,7 +22,7 @@ class MailerTest extends TestCase
 
     public function testSendProviderNotSetException()
     {
-        $mailer = new Mailer();
+        $mailer = $this->createMailer();
         $mailable = $this->createMailable();
         $this->expectException(\InvalidArgumentException::class);
         $mailer->send($mailable);
@@ -32,7 +31,7 @@ class MailerTest extends TestCase
     public function testQueue()
     {
         Queue::fake();
-        $mailer = new Mailer();
+        $mailer = $this->createMailer();
         $mailer->queue($this->createMailable());
         Queue::assertPushed(MailSend::class);
     }
@@ -40,7 +39,7 @@ class MailerTest extends TestCase
     public function testQueueTwice()
     {
         Queue::fake();
-        $mailer = new Mailer();
+        $mailer = $this->createMailer();
         $mailer->queue($this->createMailable());
         $mailer->queue($this->createMailable());
         Queue::assertPushed(MailSend::class, 2);

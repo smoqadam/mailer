@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Mail\Contracts\MailerInterface;
 use App\Mail\Mailer;
+use Illuminate\Log\Logger;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(MailerInterface::class, function() {
-            return new Mailer();
+            return new Mailer($this->app->make(Logger::class));
         });
     }
 

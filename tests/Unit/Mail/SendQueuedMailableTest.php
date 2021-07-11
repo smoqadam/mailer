@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Mail;
 
-use App\Mail\Mailer;
 use App\Mail\SendQueuedMailable;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
@@ -11,7 +10,7 @@ class SendQueuedMailableTest extends TestCase
 {
     public function testAddProvider()
     {
-        $queuedMailable = new SendQueuedMailable(new Mailer());
+        $queuedMailable = new SendQueuedMailable($this->createMailer());
         $provider = $this->createMockProvider(true);
         $queuedMailable->addProvider($provider);
         $this->assertCount(1, $queuedMailable->getProviders());
@@ -20,15 +19,14 @@ class SendQueuedMailableTest extends TestCase
     public function testNullProviders()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $queuedMailable = new SendQueuedMailable(new Mailer());
+        $queuedMailable = new SendQueuedMailable($this->createMailer());
         $queuedMailable->send($this->createMailable());
     }
 
     public function testSendShouldFail()
     {
         Log::shouldReceive('error')->once()->with('error');
-
-        $queuedMailable = new SendQueuedMailable(new Mailer());
+        $queuedMailable = new SendQueuedMailable($this->createMailer());
         $provider1 = $this->createMockProvider(false, 'error');
         $result = $queuedMailable
             ->addProvider($provider1)
@@ -39,7 +37,7 @@ class SendQueuedMailableTest extends TestCase
 
     public function testSendShouldRun()
     {
-        $queuedMailable = new SendQueuedMailable(new Mailer());
+        $queuedMailable = new SendQueuedMailable($this->createMailer());
         $provider1 = $this->createMockProvider(true);
         $result = $queuedMailable
             ->addProvider($provider1)
@@ -55,7 +53,7 @@ class SendQueuedMailableTest extends TestCase
         /// info for the second provider
         Log::shouldReceive('info')->once()->with('success');
 
-        $queuedMailable = new SendQueuedMailable(new Mailer());
+        $queuedMailable = new SendQueuedMailable($this->createMailer());
         $provider1 = $this->createMockProvider(false, 'error');
         $provider2 = $this->createMockProvider(true);
         $result = $queuedMailable
@@ -70,8 +68,7 @@ class SendQueuedMailableTest extends TestCase
     {
         /// expecting one info log for the first provider
         Log::shouldReceive('info')->once()->with('success');
-
-        $queuedMailable = new SendQueuedMailable(new Mailer());
+        $queuedMailable = new SendQueuedMailable($this->createMailer());
         $provider1 = $this->createMockProvider(true);
         $provider2 = $this->createMockProvider(true);
         $result = $queuedMailable

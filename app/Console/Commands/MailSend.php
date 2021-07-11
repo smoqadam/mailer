@@ -2,11 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\Contracts\MailerInterface;
 use App\Mail\Mailable;
-use App\Mail\Mailer;
 use App\Mail\Providers\Sendgrid;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\HttpClient\HttpClient;
 
 class MailSend extends Command
@@ -25,13 +24,16 @@ class MailSend extends Command
      */
     protected $description = 'Send an email by command line';
 
+    private MailerInterface $mailer;
+
     /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(MailerInterface $mailer)
     {
+        $this->mailer = $mailer;
         parent::__construct();
     }
 
@@ -55,14 +57,13 @@ class MailSend extends Command
         $mailable->setBody($body);
         $mailable->setSubject($subject);
         $mailable->setIsHtml($isHtml);
-        $mailer = (new Mailer());
 
         if ($addToQueue) {
             $this->info('Email added to the queue');
-            $mailer->queue($mailable);
-        }else {
-            $mailer->setProvider(new Sendgrid(HttpClient::create()));
-            $mailer->send($mailable);
+            $this->mailer->queue($mailable);
+        } else {
+            $this->mailer->setProvider(new Sendgrid(HttpClient::create()));
+            $this->mailer->send($mailable);
             $this->info('Email sent successfully');
         }
 
