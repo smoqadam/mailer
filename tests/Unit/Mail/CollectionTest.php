@@ -1,7 +1,7 @@
 <?php
 
 namespace Tests\Unit\Mail;
-use App\Mail\Collection;
+use App\Collection\Collection;
 use Tests\TestCase;
 
 class CollectionTest extends TestCase

@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Collection\Collection;
 use App\Mail\Contracts\EmailProvider;
 
 class ProviderCollection extends Collection
